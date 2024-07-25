@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Star Trek In Order</title>
+
+  <style>
+
+    body {
+      background:     #363339;
+      color:          ghostwhite;
+      display:        flex;
+      flex-direction: column;
+      align-items:    center;
+      font-size:      18px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    li {
+      line-height: 1.25em;
+      padding-bottom: 0.15em;
+    }
+
+    a[href] {
+      color:           skyblue;
+      text-decoration: none;
+      font-family:     monospace;
+    }
+
+    a[id], a[id] > strong {
+      color:       skyblue;
+      font-family: monospace;
+    }
+
+    strong {
+      color: lightsalmon;
+    }
+
+    em {
+      color: palegoldenrod;
+      color: wheat;
+    }
+
+    code {
+      font-family:      monospace;
+      color: wheat;
+      background-color: color-mix(in srgb, #363339 90%, black);
+      border-radius: 6px;
+    }
+
+    #message, #md {
+      margin:  1em;
+      padding: 1em;
+    }
+
+  </style>
+
+
+  <script type="module">
+    import DOMPurify from 'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/+esm';
+    import { marked } from 'https://cdn.jsdelivr.net/npm/marked@13.0.2/+esm';
+
+    const text = await (await fetch('./README.md')).text();
+
+    marked.use({
+      async: false,
+      pedantic: false,
+      gfm: true,
+    });
+
+    const parsed = await marked.parse(text);
+    const sanitized = DOMPurify.sanitize(parsed);
+
+    console.log({ parsed, sanitized });
+
+    document.getElementById('md').innerHTML = sanitized;
+
+  </script>
+
+</head>
+
+<body>
+
+<p id="message">If you are having issues viewing the content, click <a href="./README.md">here</a>.</p>
+<div id="md"></div>
+
+</body>
+
+</html>
+
+
+
