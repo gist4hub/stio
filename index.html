@@ -13,8 +13,11 @@
       color:          ghostwhite;
       display:        flex;
       flex-direction: column;
+      flex-wrap:      wrap;
       align-items:    center;
       font-size:      18px;
+      width:          100%;
+      margin:         0;
     }
 
     h1 {
@@ -22,7 +25,7 @@
     }
 
     li {
-      line-height: 1.25em;
+      line-height:    1.25em;
       padding-bottom: 0.15em;
     }
 
@@ -48,14 +51,32 @@
 
     code {
       font-family:      monospace;
-      color: wheat;
+      color:            wheat;
       background-color: color-mix(in srgb, #363339 90%, black);
-      border-radius: 6px;
+      border-radius:    6px;
     }
 
-    #message, #md {
+    #content {
+      display:   flex;
+      flex-wrap: wrap;
+      font-size: 18px;
+      width:     100%;
+      margin:    0;
+    }
+
+    #message, #readme, #timeline {
       margin:  1em;
       padding: 1em;
+    }
+
+    #readme, #timeline {
+      flex:      1;
+      min-width: 45%;
+    }
+
+    #timeline p {
+      margin:  0;
+      padding: 0;
     }
 
   </style>
@@ -65,20 +86,24 @@
     import DOMPurify from 'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/+esm';
     import { marked } from 'https://cdn.jsdelivr.net/npm/marked@13.0.2/+esm';
 
-    const text = await (await fetch('./README.md')).text();
-
     marked.use({
       async: false,
       pedantic: false,
       gfm: true,
     });
 
-    const parsed = await marked.parse(text);
-    const sanitized = DOMPurify.sanitize(parsed);
 
-    console.log({ parsed, sanitized });
+    const load = async input => DOMPurify.sanitize(
+      await marked.parse(
+        await (
+          await fetch(input)
+        ).text()
+      )
+    );
 
-    document.getElementById('md').innerHTML = sanitized;
+
+    document.getElementById('readme').innerHTML = await load('./README.md');
+    document.getElementById('timeline').innerHTML = await load('./timeline.md');
 
   </script>
 
@@ -86,8 +111,15 @@
 
 <body>
 
-<p id="message">If you are having issues viewing the content, click <a href="./README.md">here</a>.</p>
-<div id="md"></div>
+<p id="message">
+  If you are having issues viewing the content,
+  click <a href="https://github.com/gist4hub/stio">here</a>.
+</p>
+
+<div id="content">
+  <div id="readme"></div>
+  <div id="timeline"></div>
+</div>
 
 </body>
 
